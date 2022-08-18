@@ -1,4 +1,4 @@
-﻿using DotnetChat.Models;
+﻿using DotnetChat.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotnetChat.Data

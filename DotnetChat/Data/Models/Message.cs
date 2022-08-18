@@ -1,10 +1,10 @@
 ﻿using DotnetChat.Enums;
 
-namespace DotnetChat.Models
+namespace DotnetChat.Data.Models
 {
     public class Message
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public User Author { get; set; }
         public string Text { get; set; }
         public DateTime CreatedDate { get; set; }

@@ -24,11 +24,11 @@ namespace DotnetChat.Migrations
 
             modelBuilder.Entity("ChatUser", b =>
                 {
-                    b.Property<Guid>("ChatsId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("MembersId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("MembersId")
+                        .HasColumnType("int");
 
                     b.HasKey("ChatsId", "MembersId");
 
@@ -37,11 +37,13 @@ namespace DotnetChat.Migrations
                     b.ToTable("ChatUser");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Chat", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Chat", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -54,17 +56,19 @@ namespace DotnetChat.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Chat");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Message", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Message", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<Guid>("ChatId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChatId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -72,8 +76,8 @@ namespace DotnetChat.Migrations
                     b.Property<int>("Delete")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("MessageReplyId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int?>("MessageReplyId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -90,13 +94,19 @@ namespace DotnetChat.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.User", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserName")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -105,9 +115,9 @@ namespace DotnetChat.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Group", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Group", b =>
                 {
-                    b.HasBaseType("DotnetChat.Models.Chat");
+                    b.HasBaseType("DotnetChat.Data.Models.Chat");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -116,43 +126,43 @@ namespace DotnetChat.Migrations
                     b.HasDiscriminator().HasValue("Group");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Private", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Private", b =>
                 {
-                    b.HasBaseType("DotnetChat.Models.Chat");
+                    b.HasBaseType("DotnetChat.Data.Models.Chat");
 
                     b.HasDiscriminator().HasValue("Private");
                 });
 
             modelBuilder.Entity("ChatUser", b =>
                 {
-                    b.HasOne("DotnetChat.Models.Chat", null)
+                    b.HasOne("DotnetChat.Data.Models.Chat", null)
                         .WithMany()
                         .HasForeignKey("ChatsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DotnetChat.Models.User", null)
+                    b.HasOne("DotnetChat.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("MembersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Message", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Message", b =>
                 {
-                    b.HasOne("DotnetChat.Models.User", "Author")
+                    b.HasOne("DotnetChat.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DotnetChat.Models.Chat", "Chat")
+                    b.HasOne("DotnetChat.Data.Models.Chat", "Chat")
                         .WithMany("Messages")
                         .HasForeignKey("ChatId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DotnetChat.Models.Message", "MessageReply")
+                    b.HasOne("DotnetChat.Data.Models.Message", "MessageReply")
                         .WithMany()
                         .HasForeignKey("MessageReplyId");
 
@@ -163,7 +173,7 @@ namespace DotnetChat.Migrations
                     b.Navigation("MessageReply");
                 });
 
-            modelBuilder.Entity("DotnetChat.Models.Chat", b =>
+            modelBuilder.Entity("DotnetChat.Data.Models.Chat", b =>
                 {
                     b.Navigation("Messages");
                 });
