@@ -4,7 +4,7 @@ namespace DotnetChat.Models
 {
     public class Message
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public User Author { get; set; }
         public string Text { get; set; }
         public DateTime CreatedDate { get; set; }
