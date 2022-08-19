@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore;
 using DotnetChat.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using DotnetChat.Controllers;
+using System.Reflection;
 
 namespace DotnetChat
 {
@@ -17,7 +20,15 @@ namespace DotnetChat
         {
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ChatContext>(options => options.UseSqlServer(connectionString));
+
             services.AddSignalR();
+            services.AddControllersWithViews();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 
         public void Configure(IApplicationBuilder app, IHostEnvironment env)
@@ -27,15 +38,18 @@ namespace DotnetChat
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
             
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", () => "Hello Chat!");
+                endpoints.MapControllerRoute("default", "{controller=Chat}/{action=Index}");
             });
         }
     }
