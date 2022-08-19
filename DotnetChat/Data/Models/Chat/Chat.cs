@@ -5,5 +5,11 @@
         public int Id { get; set; }
         public IEnumerable<User> Members { get; set; }
         public IEnumerable<Message> Messages { get; set; }
+
+        public Chat()
+        {
+            Members = new List<User>();
+            Messages = new List<Message>();
+        }
     }
 }

@@ -6,5 +6,10 @@
         public string Login { get; set; }
         public string Password { get; set; }
         public IEnumerable<Chat> Chats { get; set; }
+
+        public User()
+        {
+            Chats = new List<Chat>();
+        }
     }
 }
