@@ -11,5 +11,10 @@
             Members = new List<User>();
             Messages = new List<Message>();
         }
+
+        public virtual string GetName()
+        {
+            return string.Join(",", Members.Select(s => s.Login));
+        }
     }
 }
