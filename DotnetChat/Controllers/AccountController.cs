@@ -43,7 +43,7 @@ namespace DotnetChat.Controllers
                 new Claim("Id", user.Id.ToString())
             };
 
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", "Login", "Id");
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, "Id");
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
             return RedirectToAction("Index", "Chat");
         }
