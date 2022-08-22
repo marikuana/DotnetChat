@@ -28,6 +28,10 @@ namespace DotnetChat
                 options.LoginPath = "/Account/Login";
             });
 
+            var onlineService = new OnlineUserService();
+            services.AddSingleton<IUserConnertions>(onlineService);
+            services.AddSingleton<IOnlineUserService>(onlineService);
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 
