@@ -12,10 +12,11 @@ namespace DotnetChat.Controllers
 {
     public class AccountController : Controller
     {
-        private ChatContext db;
-        public AccountController(ChatContext context)
+        private IUserRepository userRepository;
+
+        public AccountController(IUserRepository userRepository)
         {
-            db = context;
+            this.userRepository = userRepository;
         }
 
         [HttpGet]
@@ -30,7 +31,7 @@ namespace DotnetChat.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            User? user = await db.Users.FirstOrDefaultAsync(u => u.Login == model.Login && u.Password == model.Password);
+            User? user = userRepository.Get(u => u.Login == model.Login && u.Password == model.Password);
             if (user == null)
             {
                 ModelState.AddModelError("", "Account not found");
