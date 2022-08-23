@@ -9,5 +9,7 @@ namespace DotnetChat.Models
 
         [Required, MaxLength(1024)]
         public string Text { get; set; }
+
+        public int? ReplyMessage { get; set; }
     }
 }
