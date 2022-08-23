@@ -2,11 +2,6 @@
 {
     public class Group : Chat
     {
-        public string Name { get; set; }
-
-        public override string GetName()
-        {
-            return Name;
-        }
+        public override string? Name { get; set; }
     }
 }
