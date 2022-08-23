@@ -34,6 +34,7 @@ namespace DotnetChat
 
             services.AddTransient<IUserManager, UserManager>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IMessageManager, MessageManager>();
 
             var onlineService = new OnlineUserService();
             services.AddSingleton<IUserConnertions>(onlineService);
