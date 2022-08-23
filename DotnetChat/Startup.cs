@@ -32,6 +32,7 @@ namespace DotnetChat
             services.AddTransient<IChatRepository, ChatRepository>();
             services.AddTransient<IMessageRepository, MessageRepository>();
 
+            services.AddTransient<IChatManager, ChatManager>();
             services.AddTransient<IUserManager, UserManager>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IMessageManager, MessageManager>();
