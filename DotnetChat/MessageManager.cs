@@ -1,5 +1,6 @@
 ﻿using DotnetChat.Data;
 using DotnetChat.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DotnetChat
 {
@@ -17,6 +18,17 @@ namespace DotnetChat
             return messageRepository
                 .Where(m => m.Id == id)
                 .FirstOrDefault();
+        }
+
+        public IEnumerable<Message> GetMessages(Chat chat, int lastMessageId = int.MaxValue, int count = 1)
+        {
+            return messageRepository
+                .Where(m => m.Chat.Id == chat.Id && m.Id < lastMessageId)
+                .Where(m => m.Delete != Enums.MessageDelete.DeleteForAll)
+                .OrderByDescending(m => m.CreatedDate)
+                .Include(m => m.Author)
+                .Take(count)
+                .Reverse();
         }
 
         public bool IsAuthor(Message message, User author)
