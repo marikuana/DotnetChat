@@ -1,3 +1,4 @@
+using DotnetChat;
 using DotnetChat.Controllers;
 using DotnetChat.Data;
 using DotnetChat.Data.Models;
@@ -20,7 +21,7 @@ namespace DotnetChatTests
         [Fact]
         public async void LoginReturnAViewResultWithLoginModel()
         {
-            var accountController = new AccountController(null);
+            var accountController = new AccountController(null, null);
             var loginModel = new LoginModel();
             accountController.ModelState.AddModelError("Login", "Max Lenght 64");
 
@@ -35,7 +36,7 @@ namespace DotnetChatTests
         {
             var userRepository = new Mock<IUserRepository>();
             userRepository.Setup(x => x.Get(u => true)).Returns(null as User);
-            var accountController = new AccountController(userRepository.Object);
+            var accountController = new AccountController(userRepository.Object, null);
             var loginModel = new LoginModel();
 
             var result = await accountController.Login(loginModel);
@@ -45,20 +46,22 @@ namespace DotnetChatTests
             Assert.NotEmpty(viewResult.ViewData.ModelState);
         }
 
-        /*[Fact]
+        [Fact]
         public async void LoginReturnARedirectToActionResult()
         {
             var user = new User() { Login = "User", Password = "123" };
             var loginModel = new LoginModel() { Login = user.Login, Password = user.Password };
             var userRepository = new Mock<IUserRepository>();
-            userRepository.Setup(x => x.Get(It.IsAny<Expression<Func<User,bool>>>())).Returns(user);
-            var accountController = new AccountController(userRepository.Object);
+            userRepository.Setup(x => x.Get(It.IsAny<Expression<Func<User, bool>>>())).Returns(user);
+            var userService = new Mock<IUserService>();
+            userService.Setup(x => x.Authorize(user, It.IsAny<HttpContext>())).Returns(Task.CompletedTask);
+            var accountController = new AccountController(userRepository.Object, userService.Object);
 
             var result = await accountController.Login(loginModel);
 
             var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
             Assert.Equal("Index", redirectToActionResult.ActionName);
             Assert.Equal("Chat", redirectToActionResult.ControllerName);
-        }*/
+        }
     }
 }
