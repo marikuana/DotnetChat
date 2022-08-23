@@ -28,6 +28,10 @@ namespace DotnetChat
                 options.LoginPath = "/Account/Login";
             });
 
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IChatRepository, ChatRepository>();
+            services.AddTransient<IMessageRepository, MessageRepository>();
+
             services.AddTransient<IUserManager, UserManager>();
             services.AddTransient<IUserService, UserService>();
 
