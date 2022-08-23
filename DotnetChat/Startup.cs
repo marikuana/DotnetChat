@@ -28,6 +28,7 @@ namespace DotnetChat
                 options.LoginPath = "/Account/Login";
             });
 
+            services.AddTransient<IUserManager, UserManager>();
             services.AddTransient<IUserService, UserService>();
 
             var onlineService = new OnlineUserService();
