@@ -7,12 +7,12 @@ namespace DotnetChat.Controllers
     [Authorize]
     public class ChatHub : Hub<ChatHub>
     {
-        private UserManager userManager;
         private IUserConnertions userConnertions;
+        private IUserService userService;
 
-        public ChatHub(UserManager userManager, IUserConnertions userConnertions)
+        public ChatHub(IUserService userService, IUserConnertions userConnertions)
         {
-            this.userManager = userManager;
+            this.userService = userService;
             this.userConnertions = userConnertions;
         }
 
@@ -21,7 +21,7 @@ namespace DotnetChat.Controllers
             if (Context.User == null)
                 throw new Exception();
 
-            int id = userManager.GetUserId(Context.User);
+            int id = userService.GetUserId(Context.User);
             string connectionId = Context.ConnectionId;
                
             userConnertions.UserConnection(id, connectionId);
@@ -33,7 +33,7 @@ namespace DotnetChat.Controllers
             if (Context.User == null)
                 throw new Exception();
 
-            int id = userManager.GetUserId(Context.User);
+            int id = userService.GetUserId(Context.User);
             string connectionId = Context.ConnectionId;
 
             userConnertions.UserConnectionClose(id, connectionId);
