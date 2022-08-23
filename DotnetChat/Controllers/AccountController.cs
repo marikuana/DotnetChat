@@ -13,10 +13,12 @@ namespace DotnetChat.Controllers
     public class AccountController : Controller
     {
         private IUserRepository userRepository;
+        private IUserService userService;
 
-        public AccountController(IUserRepository userRepository)
+        public AccountController(IUserRepository userRepository, IUserService userService)
         {
             this.userRepository = userRepository;
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -38,14 +40,7 @@ namespace DotnetChat.Controllers
                 return View(model);
             }
 
-            List<Claim> claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.Name, user.Login),
-                new Claim("Id", user.Id.ToString())
-            };
-
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimTypes.Name, "Id");
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+            await userService.Authorize(user, HttpContext);
             return RedirectToAction("Index", "Chat");
         }
     }
