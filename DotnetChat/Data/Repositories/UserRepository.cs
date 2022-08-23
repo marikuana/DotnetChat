@@ -2,7 +2,7 @@
 
 namespace DotnetChat.Data
 {
-    public class UserRepository : Repository<User>
+    public class UserRepository : Repository<User>, IUserRepository
     {
         public UserRepository(ChatContext chatContext) : base(chatContext)
         {
