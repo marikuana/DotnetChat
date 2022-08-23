@@ -9,5 +9,10 @@ namespace DotnetChat.Extensions
         {
             return clientProxy.SendAsync("OnMessage", messageView);
         }
+
+        public static Task EditMessage(this IClientProxy clientProxy, EditMessageViewModel editMessageView)
+        {
+            return clientProxy.SendAsync("EditMessage", editMessageView);
+        }
     }
 }
