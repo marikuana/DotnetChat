@@ -1,0 +1,50 @@
+﻿@model IEnumerable<DotnetChat.Models.ChatViewModel>
+
+<ul>
+    Чати
+
+    @foreach (var chatView in Model)
+    {
+        <a>
+            <div>
+                <p>@chatView.Name</p>
+                <span>
+                    @chatView.Messages.FirstOrDefault()?.Text
+                </span>
+            </div>
+        </a>
+    }
+</ul>
+
+<div id="inputForm">
+    <input type="text" id="message" />
+    <input type="button" id="sendBtn" value="Send" />
+</div>
+
+
+<script src="/js/signalr.min.js"></script>
+<script>
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chathub")
+        .build();
+
+    hubConnection.on("OnMessage", function (message) {
+        alert(JSON.stringify(message));
+    });
+
+    hubConnection.start();
+
+    document.getElementById("sendBtn").addEventListener("click", async function (e) {
+        let message = document.getElementById("message").value;
+
+        const responce = await fetch("/ChatApi/SendMessage", {
+            method: "POST",
+            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+            body: JSON.stringify({
+                text: message,
+                chatid: 1
+            })
+        });
+    });
+
+</script>
