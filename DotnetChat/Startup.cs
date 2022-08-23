@@ -54,6 +54,7 @@ namespace DotnetChat
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{controller=Chat}/{action=Index}");
+                endpoints.MapHub<ChatHub>("/chathub");
             });
         }
     }

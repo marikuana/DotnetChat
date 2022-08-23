@@ -5,7 +5,7 @@ namespace DotnetChat.Extensions
 {
     public static class ChatHubExtensions
     {
-        public static Task SendMessage(this IClientProxy clientProxy , MessageViewModel messageView)
+        public static Task SendMessage(this IClientProxy clientProxy, MessageViewModel messageView)
         {
             return clientProxy.SendAsync("OnMessage", messageView);
         }
