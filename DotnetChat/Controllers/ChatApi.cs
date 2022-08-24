@@ -86,7 +86,7 @@ namespace DotnetChat.Controllers
             if (!userManager.HasAccess(user, chat))
                 return Forbid();
 
-            var messages = messageManager.GetMessages(chat, getMessage.LastMessageId, getMessage.Count);
+            var messages = messageManager.GetMessages(chat, user, getMessage.LastMessageId, getMessage.Count);
             
             return Ok(mapper.Map<IEnumerable<MessageViewModel>>(messages));
         }

@@ -20,11 +20,11 @@ namespace DotnetChat
                 .FirstOrDefault();
         }
 
-        public IEnumerable<Message> GetMessages(Chat chat, int lastMessageId = int.MaxValue, int count = 1)
+        public IEnumerable<Message> GetMessages(Chat chat, User user, int lastMessageId = int.MaxValue, int count = 1)
         {
             return messageRepository
                 .Where(m => m.Chat.Id == chat.Id && m.Id < lastMessageId)
-                .Where(m => m.Delete != Enums.MessageDelete.DeleteForAll)
+                .Where(m => m.Delete != Enums.MessageDelete.DeleteForAll && (m.Delete != Enums.MessageDelete.DeleteForMe || m.Author.Id != user.Id))
                 .OrderByDescending(m => m.CreatedDate)
                 .Include(m => m.Author)
                 .Take(count)
