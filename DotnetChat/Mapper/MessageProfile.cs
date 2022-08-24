@@ -12,6 +12,8 @@ namespace DotnetChat.Mapper
 
             CreateMap<Message, EditMessageViewModel>()
                 .ForMember(x => x.Text, q => q.MapFrom(w => w.Text));
+
+            CreateMap<Message, DeleteMessageViewModel>();
         }
     }
 }

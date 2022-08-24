@@ -14,5 +14,10 @@ namespace DotnetChat.Extensions
         {
             return clientProxy.SendAsync("EditMessage", editMessageView);
         }
+
+        public static Task DeleteMessage(this IClientProxy clientProxy, DeleteMessageViewModel deleteMessageView)
+        {
+            return clientProxy.SendAsync("DeleteMessage", deleteMessageView);
+        }
     }
 }

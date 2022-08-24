@@ -132,7 +132,18 @@ namespace DotnetChat.Controllers
             message.Delete = deleteMessage.DeleteForMe ? Enums.MessageDelete.DeleteForMe : Enums.MessageDelete.DeleteForAll;
             messageManager.UpdateMessage(message);
 
-            // todo
+            IEnumerable<string> connectionIds;
+            if (message.Delete == Enums.MessageDelete.DeleteForMe)
+            {
+                connectionIds = onlineUserService.GetUserConnections(user.Id);
+            }
+            else
+            {
+                connectionIds = onlineUserService.GetUserConnections(chatManager.GetMembersId(messageManager.GetMessageChat(message)));
+            }
+
+            DeleteMessageViewModel messageView = mapper.Map<DeleteMessageViewModel>(message);
+            hubContext.Clients.Clients(connectionIds).DeleteMessage(messageView);
 
             return Ok();
         }
