@@ -8,7 +8,8 @@ namespace DotnetChat.Mapper
     {
         public MessageProfile()
         {
-            CreateMap<Message, MessageViewModel>();
+            CreateMap<Message, MessageViewModel>()
+                .ForMember(x => x.ChatId, q => q.MapFrom(w => w.ChatId));
 
             CreateMap<Message, EditMessageViewModel>()
                 .ForMember(x => x.Text, q => q.MapFrom(w => w.Text));
