@@ -3,25 +3,94 @@
     .build();
 
 hubConnection.on("OnMessage", function (message) {
+    AddMessage(message);
+    AddMessageHtml(message)
+});
+
+let selectChatId = 0;
+
+let chats = [
+    {
+        chatId: 0,
+        messages: [
+            {
+                Id: 0,
+                Text: "",
+                ChatId: 0,
+            }
+        ]
+    }
+];
+
+function AddMessage(message) {
+    let chat = chats.find(f => f.chatId == message.chatId);
+    if (chat == null) {
+        chats.push({ chatId: message.chatId, messages: [] });
+        chat = chats.find(f => f.chatId == message.chatId);
+    }
+    
+    chat.messages.push(message);
+}
+
+function AddMessageHtml(message) {
+    if (Array.isArray(message)) {
+        for (var i = 0; i < message.length; i++) {
+            AddMessageHtml(message[i]);
+        }
+        return;
+    }
+
+    let author = message.author.userName;
+    let text = message.text;
+
     let userNameElem = document.createElement("b");
-    userNameElem.appendChild(document.createTextNode(message.author.userName + ": "));
+    userNameElem.appendChild(document.createTextNode(author + ": "));
 
     let elem = document.createElement("p");
     elem.appendChild(userNameElem);
-    elem.appendChild(document.createTextNode(message.text));
+    elem.appendChild(document.createTextNode(text + " " + message.createdDate));
 
     var firstElem = document.getElementById("chat").lastChild;
     document.getElementById("chat").insertBefore(elem, firstElem);
-});
+}
 
-let selectChatId = 1; // 0
+async function LoadChat(chatId) {
+    ClearMessageHtml();
+
+    selectChatId = chatId;
+
+    let chat = chats.find(f => f.chatId == chatId);
+    if (chat == null) {
+        chats.push({ chatId: chatId, messages: [] });
+        chat = chats.find(f => f.chatId == chatId);
+        let messages = await GetMessages(chatId, 10, 2147483647);
+        chat.messages.push(...messages)
+    }
+
+    AddMessageHtml(chat.messages);
+}
+
+function ClearMessageHtml() {
+    var container = document.getElementById("chat");
+
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
+
+function SelectChat(chatId) {
+    if (selectChatId == chatId)
+        return;
+
+    LoadChat(chatId);
+}
 
 async function SendMessage(message) {
     SendMessageWithChatId(selectChatId, message);
 }
 
 async function SendMessageWithChatId(chatId, message) {
-    const responce = await fetch("/ChatApi/SendMessage", {
+    const response = await fetch("/ChatApi/SendMessage", {
         method: "POST",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -32,19 +101,24 @@ async function SendMessageWithChatId(chatId, message) {
 }
 
 async function GetMessages(chatId, count, lastMessageId) {
-    const responce = await fetch("/ChatApi/GetMessages", {
+    const response = await fetch(`/ChatApi/GetMessages?ChatId=${chatId}&Count=${count}&LastMessageId=${lastMessageId}`, {
         method: "GET",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({
-            ChatId: chatId,
-            Count: count,
-            LastMessageId: lastMessageId
-        })
+        headers: { "Accept": "application/json", "Content-Type": "application/json" }
     });
+
+    const data = await response.json();
+
+    if (response.ok === true) {
+        return data;
+    }
+    else {
+        console.log("Error: ", response.status, data.errorText);
+        return [];
+    }
 }
 
 async function EditMessage(messageId, newText) {
-    const responce = await fetch("/ChatApi/EditMessage", {
+    const response = await fetch("/ChatApi/EditMessage", {
         method: "PUT",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,7 +129,7 @@ async function EditMessage(messageId, newText) {
 }
 
 async function DeleteMessage(messageId, deleteForMe) {
-    const responce = await fetch("/ChatApi/DeleteMessage", {
+    const response = await fetch("/ChatApi/DeleteMessage", {
         method: "DELETE",
         headers: { "Accept": "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({
