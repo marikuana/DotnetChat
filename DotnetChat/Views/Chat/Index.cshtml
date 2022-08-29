@@ -15,7 +15,7 @@
 
             @foreach (var chatView in Model)
             {
-                <button class="chat-button">
+                <button class="chat-button" onclick="SelectChat(@chatView.Id)">
                     <h4>
                         @chatView.Name
                     </h4>
