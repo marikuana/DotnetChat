@@ -3,33 +3,12 @@
 
 <head>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        h1, h4 {
-            color: white;
-        }
-
-        .chat-button {
-            display:block; 
-            width:100%; 
-            border:hidden; 
-            background:border-box;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        .chat-button:hover {
-            background: #202B36;
-        }
-
-        p {
-            color: white;
-        }
-    </style>
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 <body>
     <div class="row modal-fullscreen">
 
-        <div class="col-3 asd" style="background:#17212B;">
+        <div class="col-3" style="background:#17212B; padding-left: 0; padding-right: 0;">
             <h1>
                 Чати
             </h1>
@@ -44,13 +23,13 @@
             }
         </div>
 
-        <div class="col" style="background:#0E1621">
-            <div id="chat" style="scroll-behavior:auto">
+        <div class="col" style="background:#0E1621; padding-left: 0; padding-right: 0;">
+            <div id="chat" style="overflow-y: scroll; max-height:auto">
             </div>
 
-            <div id="inputForm">
-                <input type="text" id="message" />
-                <input type="button" id="sendBtn" value="Send" />
+            <div id="inputForm" class="input-box position-absolute bottom-0">
+                <input type="text" id="message"/>
+                <input type="button" id="sendBtn" value="Send"/>
             </div>
         </div>
     </div>
