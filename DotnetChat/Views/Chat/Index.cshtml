@@ -1,50 +1,67 @@
 ﻿@model IEnumerable<DotnetChat.Models.ChatViewModel>
+<html>
 
-<ul>
-    Чати
+<head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1, h4 {
+            color: white;
+        }
 
-    @foreach (var chatView in Model)
-    {
-        <a>
-            <div>
-                <p>@chatView.Name</p>
-                <span>
-                    @chatView.Messages.FirstOrDefault()?.Text
-                </span>
+        .chat-button {
+            display:block; 
+            width:100%; 
+            border:hidden; 
+            background:border-box;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .chat-button:hover {
+            background: #202B36;
+        }
+
+        p {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="row modal-fullscreen">
+
+        <div class="col-3 asd" style="background:#17212B;">
+            <h1>
+                Чати
+            </h1>
+
+            @foreach (var chatView in Model)
+            {
+                <button class="chat-button">
+                    <h4>
+                        @chatView.Name
+                    </h4>
+                </button>
+            }
+        </div>
+
+        <div class="col" style="background:#0E1621">
+            <div id="chat" style="scroll-behavior:auto">
             </div>
-        </a>
-    }
-</ul>
 
-<div id="inputForm">
-    <input type="text" id="message" />
-    <input type="button" id="sendBtn" value="Send" />
-</div>
+            <div id="inputForm">
+                <input type="text" id="message" />
+                <input type="button" id="sendBtn" value="Send" />
+            </div>
+        </div>
+    </div>
+    <script src="/js/signalr.min.js"></script>
+    <script src="/js/chat.js"></script>
+    <script>
+        document.getElementById("sendBtn").addEventListener("click", async function (e) {
+             let message = document.getElementById("message").value;
+             SendMessage(message);
+         });
+    </script>
+</body>
 
-
-<script src="/js/signalr.min.js"></script>
-<script>
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/chathub")
-        .build();
-
-    hubConnection.on("OnMessage", function (message) {
-        alert(JSON.stringify(message));
-    });
-
-    hubConnection.start();
-
-    document.getElementById("sendBtn").addEventListener("click", async function (e) {
-        let message = document.getElementById("message").value;
-
-        const responce = await fetch("/ChatApi/SendMessage", {
-            method: "POST",
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({
-                text: message,
-                chatid: 1
-            })
-        });
-    });
-
-</script>
+</html>
