@@ -40,6 +40,9 @@ function AddMessageHtml(message) {
         return;
     }
 
+    if (message.chatId != selectChatId)
+        return;
+
     let author = message.author.userName;
     let text = message.text;
 
@@ -50,8 +53,7 @@ function AddMessageHtml(message) {
     elem.appendChild(userNameElem);
     elem.appendChild(document.createTextNode(text + " " + message.createdDate));
 
-    var firstElem = document.getElementById("chat").lastChild;
-    document.getElementById("chat").insertBefore(elem, firstElem);
+    document.getElementById("chat").insertAdjacentElement("beforeend", elem);
 }
 
 async function LoadChat(chatId) {
