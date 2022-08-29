@@ -51,7 +51,7 @@ function AddMessageHtml(message) {
 
     let elem = document.createElement("p");
     elem.appendChild(userNameElem);
-    elem.appendChild(document.createTextNode(text + " " + message.createdDate));
+    elem.appendChild(document.createTextNode(text));
 
     document.getElementById("chat").insertAdjacentElement("beforeend", elem);
 }
