@@ -22,6 +22,25 @@ let chats = [
     }
 ];
 
+async function LoadPreviousMessages() {
+    let chat = chats.find(f => f.chatId == selectChatId);
+    if (chat == null)
+        return;
+
+    let lastId = chat.messages[0].id;
+    let messages = await GetMessages(selectChatId, 10, lastId);
+
+    chat.messages.unshift(...messages);
+
+    let chatBox = document.getElementById("chat");
+
+    for (var i = messages.length - 1; i >= 0; i--) {
+        let elem = CreateMessageElem(messages[i]);
+
+        chatBox.insertBefore(elem, chatBox.firstChild);
+    }
+}
+
 function AddMessage(message) {
     let chat = chats.find(f => f.chatId == message.chatId);
     if (chat == null) {
@@ -43,6 +62,17 @@ function AddMessageHtml(message) {
     if (message.chatId != selectChatId)
         return;
 
+    let elem = CreateMessageElem(message);
+    let chat = document.getElementById("chat");
+
+    chat.insertAdjacentElement("beforeend", elem);
+    chat.scrollTo({
+        top: chat.scrollHeight,
+        behavior: 'smooth'
+    });
+}
+
+function CreateMessageElem(message) {
     let author = message.author.userName;
     let text = message.text;
 
@@ -53,7 +83,7 @@ function AddMessageHtml(message) {
     elem.appendChild(userNameElem);
     elem.appendChild(document.createTextNode(text));
 
-    document.getElementById("chat").insertAdjacentElement("beforeend", elem);
+    return elem;
 }
 
 async function LoadChat(chatId) {
@@ -65,7 +95,7 @@ async function LoadChat(chatId) {
     if (chat == null) {
         chats.push({ chatId: chatId, messages: [] });
         chat = chats.find(f => f.chatId == chatId);
-        let messages = await GetMessages(chatId, 10, 2147483647);
+        let messages = await GetMessages(chatId, 30, 2147483647);
         chat.messages.push(...messages)
     }
 

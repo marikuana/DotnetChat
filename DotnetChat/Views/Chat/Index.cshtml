@@ -48,6 +48,13 @@
                 document.getElementById("sendBtn").click();
             }
         });
+
+        document.getElementById("chat").addEventListener("scroll", function(e) {
+            let chat = document.getElementById("chat");
+            if (chat.scrollTop == 0){
+                LoadPreviousMessages();
+            }
+        });
     </script>
 </body>
 
