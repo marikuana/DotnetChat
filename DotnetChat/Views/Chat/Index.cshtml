@@ -28,8 +28,8 @@
             </div>
 
             <div id="inputForm" class="input-box" style="vertical-align: bottom; height: 10%; display: flex">
-                <input type="text" id="message" style="font-size: 20px; width: -webkit-fill-available;"/>
-                <input type="button" id="sendBtn" value="Send" style="width: 60px;"/>
+                <input type="text" id="message" style="width: -webkit-fill-available;"/>
+                <input type="button" id="sendBtn" value="Send" style="width: 80px;"/>
             </div>
         </div>
     </div>
@@ -37,9 +37,17 @@
     <script src="/js/chat.js"></script>
     <script>
         document.getElementById("sendBtn").addEventListener("click", async function (e) {
-             let message = document.getElementById("message").value;
-             SendMessage(message);
-         });
+            let input = document.getElementById("message");
+            let message = input.value;
+            input.value = "";
+            SendMessage(message);
+        });
+
+        document.getElementById("message").addEventListener("keypress", function(e) {
+            if (event.key === "Enter") {
+                document.getElementById("sendBtn").click();
+            }
+        });
     </script>
 </body>
 
