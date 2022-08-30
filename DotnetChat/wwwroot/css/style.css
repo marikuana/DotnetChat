@@ -1,5 +1,6 @@
 ﻿h1, h4, p {
     color: white;
+    margin-bottom: 0;
 }
 
 .chat-button {
@@ -17,12 +18,18 @@
 
 .input-box {
     background: gray;
-    margin-left: 3px;
-    width: -webkit-fill-available;
+/*    width: -webkit-fill-available;*/
 }
 
 input {
     background: #17212B;
     color: white;
     border: none;
+    height: 100%;
+    padding: 0;
+}
+
+button {
+    background-color: #17212B;
+    color: white;
 }
