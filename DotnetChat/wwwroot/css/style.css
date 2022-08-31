@@ -1,0 +1,39 @@
+﻿h1, h4, p {
+    color: white;
+    margin-bottom: 0;
+}
+
+.chat-button {
+    display: block;
+    width: 100%;
+    border: hidden;
+    background: border-box;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.chat-button:hover {
+    background: #202B36;
+}
+
+.input-box {
+    background: gray;
+/*    width: -webkit-fill-available;*/
+}
+
+input {
+    background: #17212B;
+    color: white;
+    border: none;
+    height: 100%;
+    padding: 0;
+}
+
+input:focus {
+    outline: none;
+}
+
+button {
+    background-color: #17212B;
+    color: white;
+}

@@ -1,50 +1,61 @@
 ﻿@model IEnumerable<DotnetChat.Models.ChatViewModel>
+<html>
 
-<ul>
-    Чати
+<head>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="row modal-fullscreen">
 
-    @foreach (var chatView in Model)
-    {
-        <a>
-            <div>
-                <p>@chatView.Name</p>
-                <span>
-                    @chatView.Messages.FirstOrDefault()?.Text
-                </span>
+        <div class="col-3" style="background:#17212B; padding-left: 0; padding-right: 0;">
+            <h1>
+                Чати
+            </h1>
+
+            @foreach (var chatView in Model)
+            {
+                <button class="chat-button" onclick="SelectChat(@chatView.Id)">
+                    <h4>
+                        @chatView.Name
+                    </h4>
+                </button>
+            }
+        </div>
+
+        <div class="col" style="background:#0E1621; padding-left: 0; padding-right: 0; padding: 5px; height: 100%">
+            <div id="chat" style="overflow-y: scroll; height: 90%;">
             </div>
-        </a>
-    }
-</ul>
 
-<div id="inputForm">
-    <input type="text" id="message" />
-    <input type="button" id="sendBtn" value="Send" />
-</div>
-
-
-<script src="/js/signalr.min.js"></script>
-<script>
-    const hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl("/chathub")
-        .build();
-
-    hubConnection.on("OnMessage", function (message) {
-        alert(JSON.stringify(message));
-    });
-
-    hubConnection.start();
-
-    document.getElementById("sendBtn").addEventListener("click", async function (e) {
-        let message = document.getElementById("message").value;
-
-        const responce = await fetch("/ChatApi/SendMessage", {
-            method: "POST",
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
-            body: JSON.stringify({
-                text: message,
-                chatid: 1
-            })
+            <div id="inputForm" class="input-box" style="vertical-align: bottom; height: 10%; display: flex">
+                <input type="text" id="message" style="width: -webkit-fill-available;"/>
+                <input type="button" id="sendBtn" value="Send" style="width: 80px;"/>
+            </div>
+        </div>
+    </div>
+    <script src="/js/signalr.min.js"></script>
+    <script src="/js/chat.js"></script>
+    <script>
+        document.getElementById("sendBtn").addEventListener("click", async function (e) {
+            let input = document.getElementById("message");
+            let message = input.value;
+            input.value = "";
+            SendMessage(message);
         });
-    });
 
-</script>
+        document.getElementById("message").addEventListener("keypress", function(e) {
+            if (event.key === "Enter") {
+                document.getElementById("sendBtn").click();
+            }
+        });
+
+        document.getElementById("chat").addEventListener("scroll", function(e) {
+            let chat = document.getElementById("chat");
+            if (chat.scrollTop == 0){
+                LoadPreviousMessages();
+            }
+        });
+    </script>
+</body>
+
+</html>
