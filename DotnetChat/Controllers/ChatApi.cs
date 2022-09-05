@@ -46,7 +46,7 @@ namespace DotnetChat.Controllers
 
             Chat? chat = chatManager.GetChat(model.ChatId);
             if (chat == null)
-                return BadRequest(ModelState);
+                return BadRequest();
 
             User? user = GetUser();
             if (user == null)
