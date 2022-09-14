@@ -19,18 +19,16 @@ namespace DotnetChat.Controllers
         private IChatManager chatManager;
         private IMessageManager messageManager;
         private IMapper mapper;
-        private IHubContext<ChatHub> hubContext;
-        private IOnlineUserService onlineUserService;
+        private IUserSenderService userSenderService;
 
-        public ChatApiController(IChatManager chatManager, IUserManager userManager, IMapper mapper, IUserService userService, IMessageManager messageManager, IHubContext<ChatHub> hubContext, IOnlineUserService onlineUserService)
+        public ChatApiController(IChatManager chatManager, IUserManager userManager, IMapper mapper, IUserService userService, IMessageManager messageManager, IUserSenderService userSenderService)
         {
             this.chatManager = chatManager;
             this.userManager = userManager;
             this.mapper = mapper;
             this.userService = userService;
             this.messageManager = messageManager;
-            this.hubContext = hubContext;
-            this.onlineUserService = onlineUserService;
+            this.userSenderService = userSenderService;
         }
 
         private User? GetUser()
@@ -67,7 +65,7 @@ namespace DotnetChat.Controllers
 
             MessageViewModel messageView = mapper.Map<MessageViewModel>(message);
             var userIds = chatManager.GetMembersId(chat);
-            hubContext.Clients.Clients(onlineUserService.GetUserConnections(userIds)).SendMessage(messageView);
+            userSenderService.Send(userIds, c => c.SendMessage(messageView));
 
             return Ok();
         }
@@ -110,7 +108,7 @@ namespace DotnetChat.Controllers
 
             EditMessageViewModel messageView = mapper.Map<EditMessageViewModel>(message);
             var userIds = chatManager.GetMembersId(messageManager.GetMessageChat(message));
-            hubContext.Clients.Clients(onlineUserService.GetUserConnections(userIds)).EditMessage(messageView);
+            userSenderService.Send(userIds, c => c.EditMessage(messageView));
 
             return Ok();
         }
@@ -132,18 +130,19 @@ namespace DotnetChat.Controllers
             message.Delete = deleteMessage.DeleteForMe ? Enums.MessageDelete.DeleteForMe : Enums.MessageDelete.DeleteForAll;
             messageManager.UpdateMessage(message);
 
-            IEnumerable<string> connectionIds;
+            IEnumerable<int> usersId;
             if (message.Delete == Enums.MessageDelete.DeleteForMe)
             {
-                connectionIds = onlineUserService.GetUserConnections(user.Id);
+                usersId = new List<int>() { user.Id };
             }
             else
             {
-                connectionIds = onlineUserService.GetUserConnections(chatManager.GetMembersId(messageManager.GetMessageChat(message)));
+                Chat chat = messageManager.GetMessageChat(message);
+                usersId = new List<int>(chatManager.GetMembersId(chat));
             }
 
             DeleteMessageViewModel messageView = mapper.Map<DeleteMessageViewModel>(message);
-            hubContext.Clients.Clients(connectionIds).DeleteMessage(messageView);
+            userSenderService.Send(usersId, c => c.DeleteMessage(messageView));
 
             return Ok();
         }
