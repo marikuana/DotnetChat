@@ -10,6 +10,8 @@ using AutoMapper;
 using DotnetChat.Mapper;
 using DotnetChat.Models;
 using System.Linq;
+using System;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DotnetChatTests
 {
@@ -19,7 +21,7 @@ namespace DotnetChatTests
         public void SendMessageReturnABadRequestObjectResultWhenANotValidModel()
         {
             var sendMessageModel = new SendMessageModel();
-            var chatApi = new ChatApiController(null, null, null, null, null, null, null);
+            var chatApi = new ChatApiController(null, null, null, null, null, null);
             chatApi.ModelState.AddModelError("Text", "Required");
 
             var result = chatApi.SendMessage(sendMessageModel);
@@ -33,7 +35,7 @@ namespace DotnetChatTests
             var sendMessageModel = new SendMessageModel() { ChatId = 0 };
             Mock<IChatManager> chatManagerMock = new Mock<IChatManager>();
             chatManagerMock.Setup(m => m.GetChat(sendMessageModel.ChatId)).Returns(null as Chat);
-            var chatApi = new ChatApiController(chatManagerMock.Object, null, null, null, null, null, null);
+            var chatApi = new ChatApiController(chatManagerMock.Object, null, null, null, null, null);
 
             var result = chatApi.SendMessage(sendMessageModel);
 
@@ -52,7 +54,7 @@ namespace DotnetChatTests
             userService.Setup(x => x.GetUserId(It.IsAny<ClaimsPrincipal>())).Returns(userId);
             var userManager = new Mock<IUserManager>();
             userManager.Setup(x => x.GetUser(userId)).Returns(null as User);
-            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, null, userService.Object, null, null, null);
+            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, null, userService.Object, null, null);
 
             var result = chatApi.SendMessage(sendMessageModel);
 
@@ -72,7 +74,7 @@ namespace DotnetChatTests
             var userManager = new Mock<IUserManager>();
             userManager.Setup(x => x.GetUser(user.Id)).Returns(user);
             userManager.Setup(x => x.HasAccess(It.IsAny<User>(), It.IsAny<Chat>())).Returns(false);
-            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, null, userService.Object, null, null, null);
+            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, null, userService.Object, null, null);
 
             var result = chatApi.SendMessage(sendMessageModel);
 
@@ -97,7 +99,9 @@ namespace DotnetChatTests
                 cfg.AddProfile<MessageProfile>(); 
                 cfg.AddProfile<UserProfile>();
             }).CreateMapper();
-            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, mapper, userService.Object, messageManager.Object, null, null);
+            var userSenderService = new Mock<IUserSenderService>();
+            userSenderService.Setup(x => x.Send(new List<int>() { user.Id }, It.IsAny<Action<IClientProxy>>()));
+            var chatApi = new ChatApiController(chatManager.Object, userManager.Object, mapper, userService.Object, messageManager.Object, userSenderService.Object);
 
             var result = chatApi.SendMessage(sendMessageModel);
 
