@@ -41,6 +41,8 @@ namespace DotnetChat
             services.AddSingleton<IUserConnertions>(onlineService);
             services.AddSingleton<IOnlineUserService>(onlineService);
 
+            services.AddTransient<IUserSenderService, UserSenderService>();
+
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 
